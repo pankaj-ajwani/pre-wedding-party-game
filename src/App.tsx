@@ -63,7 +63,11 @@ const firebaseConfig = {
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const auth = getAuth(app);
 const db = getFirestore(app);
-const appId = 'pre_wedding_party_game';
+
+// App ID and Role from URL Query Parameters
+const urlParams = new URLSearchParams(window.location.search);
+const appId = urlParams.get('appId') || 'pre_wedding_party_game';
+const role = urlParams.get('role') || 'PLAYER'; // Default role
 
 // Confetti Component for TV Reveal
 const CanvasConfetti = ({ trigger }: { trigger: boolean }) => {
@@ -128,12 +132,11 @@ const CanvasConfetti = ({ trigger }: { trigger: boolean }) => {
 };
 
 export default function App() {
-  const [role, setRole] = useState('LANDING'); // 'LANDING', 'PLAYER', 'HOST', 'SCREEN'
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
   // App Session state
-  const sessionCode = 'PRE-WEDDING-PARTY';
+  const sessionCode = appId;
   const [playerName, setPlayerName] = useState(() => localStorage.getItem('wedding_player_name') || '');
   const [playerRole, setPlayerRole] = useState<PlayerRole>(() => localStorage.getItem('wedding_player_role') as PlayerRole || 'GUEST'); // 'GUEST', 'BRIDE', 'GROOM'
   const [playerId] = useState(() => {
@@ -261,7 +264,6 @@ export default function App() {
     };
 
     updateGlobalGameState({ players: updatedPlayers });
-    setRole('PLAYER');
   };
 
   // Cast Vote (Player or Bride/Groom)
@@ -399,7 +401,7 @@ export default function App() {
         </div>
 
         {/* View Selection Controls */}
-        <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
+        {/* <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs">
           <button
             onClick={() => setRole('LANDING')}
             className={`px-2.5 py-1 rounded-lg flex items-center gap-1 transition ${
@@ -432,7 +434,7 @@ export default function App() {
           >
             <Tv className="w-3.5 h-3.5" /> Big Screen TV
           </button>
-        </div>
+        </div> */}
 
         {/* Mute SFX Toggle */}
         <button
