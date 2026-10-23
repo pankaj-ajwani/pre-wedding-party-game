@@ -1,5 +1,5 @@
 export type GameState = {
-  status: 'LOBBY' | 'QUESTION_SHOW' | 'VOTING_OPEN' | 'VOTING_CLOSED' | 'REVEAL' | 'GAME_OVER'
+  status: 'LOBBY' | 'QUESTION_SHOW' | 'VOTING_CLOSED' | 'REVEAL' | 'GAME_OVER'
   currentQuestionIndex: number
   questions: Question[]
   players: Record<string, Player>

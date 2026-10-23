@@ -27,8 +27,7 @@ import {
   Sparkles, 
   Users, 
   ChevronRight, 
-  Lock, 
-  Unlock, 
+  Lock,
   RotateCcw,
   Trophy,
   Eye,
@@ -148,7 +147,7 @@ export default function App() {
 
   // Global Game State (Synced via Firestore)
   const [gameState, setGameState] = useState<GameState>({
-    status: 'LOBBY', // 'LOBBY', 'QUESTION_SHOW', 'VOTING_OPEN', 'VOTING_CLOSED', 'REVEAL', 'GAME_OVER'
+    status: 'LOBBY', // 'LOBBY', 'QUESTION_SHOW', 'VOTING_CLOSED', 'REVEAL', 'GAME_OVER'
     currentQuestionIndex: 0,
     questions: DEFAULT_QUESTIONS,
     players: {},
@@ -266,7 +265,7 @@ export default function App() {
 
   // Cast Vote (Player or Bride/Groom)
   const handleCastVote = (choice: VoteChoice) => {
-    if (gameState.status !== 'VOTING_OPEN') return;
+    if (gameState.status !== 'QUESTION_SHOW') return;
 
     const currentQ = gameState.questions[gameState.currentQuestionIndex];
     if (!currentQ) return;
@@ -319,8 +318,6 @@ export default function App() {
     if (gameState.status === 'LOBBY') {
       updateGlobalGameState({ status: 'QUESTION_SHOW', currentQuestionIndex: 0 });
     } else if (gameState.status === 'QUESTION_SHOW') {
-      updateGlobalGameState({ status: 'VOTING_OPEN' });
-    } else if (gameState.status === 'VOTING_OPEN') {
       updateGlobalGameState({ status: 'VOTING_CLOSED' });
     } else if (gameState.status === 'VOTING_CLOSED') {
       const currentQ = gameState.questions[gameState.currentQuestionIndex];
@@ -356,6 +353,7 @@ export default function App() {
       updateGlobalGameState({ status: 'LOBBY', currentQuestionIndex: 0 });
     }
   };
+
 
   const setCoupleChoiceByHost = (roleType: PlayerRole, choice: VoteChoice) => {
     const currentQ = gameState.questions[gameState.currentQuestionIndex];
@@ -624,21 +622,9 @@ export default function App() {
                 )}
 
                 {gameState.status === 'QUESTION_SHOW' && (
-                  <div className="bg-slate-950 border border-slate-800 p-6 rounded-3xl text-center space-y-5">
-                    <div className="inline-block px-3 py-1 rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/20 text-xs font-semibold">
-                      Question #{gameState.currentQuestionIndex + 1}
-                    </div>
-                    <h2 className="text-xl font-bold text-white leading-snug">"{currentQ?.text}"</h2>
-                    <div className="p-4 bg-slate-900/80 rounded-2xl border border-slate-800 text-xs text-slate-400 animate-pulse">
-                      Get ready! Host is opening voting shortly...
-                    </div>
-                  </div>
-                )}
-
-                {gameState.status === 'VOTING_OPEN' && (
                   <div className="bg-slate-950 border border-slate-800 p-5 rounded-3xl text-center space-y-5">
                     <div className="inline-block px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-semibold animate-pulse">
-                      ⚡ Voting OPEN! (You can change vote)
+                      ⚡ Voting OPEN!
                     </div>
 
                     <h2 className="text-lg font-bold text-white">"{currentQ?.text}"</h2>
@@ -731,17 +717,25 @@ export default function App() {
                 <p className="text-xs text-slate-400 mt-0.5">Control stages, record couple answers, and reveal results live.</p>
               </div>
 
-              <button
-                onClick={hostNextStep}
-                className="px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-rose-500/20 transition active:scale-95 flex items-center gap-2 text-sm"
-              >
-                {gameState.status === 'LOBBY' && <><Play className="w-4 h-4" /> Start Question #1</>}
-                {gameState.status === 'QUESTION_SHOW' && <><Unlock className="w-4 h-4" /> Open Voting</>}
-                {gameState.status === 'VOTING_OPEN' && <><Lock className="w-4 h-4" /> Lock Votes</>}
-                {gameState.status === 'VOTING_CLOSED' && <><Eye className="w-4 h-4" /> Reveal Results on TV</>}
-                {gameState.status === 'REVEAL' && <><ChevronRight className="w-4 h-4" /> Next Question</>}
-                {gameState.status === 'GAME_OVER' && <><RotateCcw className="w-4 h-4" /> Reset Game</>}
-              </button>
+              <div className="flex flex-wrap gap-4">
+                <button
+                  onClick={() => updateGlobalGameState({ status: 'LOBBY', currentQuestionIndex: 0 })}
+                  className="px-6 py-3 bg-gradient-to-r from-rose-500 to-brown-500 hover:from-rose-600 hover:to-brown-600 text-white font-bold rounded-2xl shadow-lg shadow-rose-500/20 transition active:scale-95 flex items-center gap-2 text-sm"
+                >
+                  <RotateCcw className="w-4 h-4" /> Reset Game
+                </button>
+
+                <button
+                  onClick={hostNextStep}
+                  className="px-6 py-3 bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold rounded-2xl shadow-lg shadow-rose-500/20 transition active:scale-95 flex items-center gap-2 text-sm"
+                >
+                  {gameState.status === 'LOBBY' && <><Play className="w-4 h-4" /> Start Question #1</>}
+                  {gameState.status === 'QUESTION_SHOW' && <><Lock className="w-4 h-4" /> Lock Votes</>}
+                  {gameState.status === 'VOTING_CLOSED' && <><Eye className="w-4 h-4" /> Reveal Results on TV</>}
+                  {gameState.status === 'REVEAL' && <><ChevronRight className="w-4 h-4" /> Next Question</>}
+                  {gameState.status === 'GAME_OVER' && <><RotateCcw className="w-4 h-4" /> Reset Game</>}
+                </button>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -957,7 +951,7 @@ export default function App() {
               </div>
             )}
 
-            {(gameState.status === 'QUESTION_SHOW' || gameState.status === 'VOTING_OPEN' || gameState.status === 'VOTING_CLOSED') && (
+            {(gameState.status === 'QUESTION_SHOW' || gameState.status === 'VOTING_CLOSED') && (
               <div className="bg-slate-950/90 border border-slate-800 rounded-3xl p-8 sm:p-12 space-y-8 shadow-2xl text-center">
                 <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900 border border-slate-800 text-xs font-bold font-mono text-amber-400">
                   QUESTION {gameState.currentQuestionIndex + 1} OF {gameState.questions.length}
@@ -974,7 +968,7 @@ export default function App() {
 
                   <h3 className="text-xl font-bold text-white">Live Votes Hidden!</h3>
                   <p className="text-xs text-slate-400">
-                    {gameState.status === 'VOTING_OPEN'
+                    {gameState.status === 'QUESTION_SHOW'
                       ? 'Guests and couple are submitting votes on their phones right now...'
                       : 'Voting is locked! Waiting for Host to reveal couple choices and live votes.'}
                   </p>
