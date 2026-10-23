@@ -15,10 +15,8 @@ import {
 } from 'firebase/auth';
 import { 
   Heart, 
-  Crown, 
-  Tv, 
-  Smartphone, 
-  Settings, 
+  Crown,
+  Smartphone,
   Play, 
   CheckCircle, 
   Award, 
@@ -450,7 +448,7 @@ export default function App() {
       <main className="flex-1 flex flex-col items-center justify-center p-3 sm:p-6 max-w-6xl w-full mx-auto">
         
         {/* LANDING / ROLE SELECTOR */}
-        {role === 'LANDING' && (
+        {/* {role === 'LANDING' && (
           <div className="w-full max-w-xl bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-8 shadow-2xl text-center space-y-6 relative overflow-hidden">
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -521,7 +519,7 @@ export default function App() {
               <span>Synced with Firebase Firestore Real-Time Database</span>
             </div>
           </div>
-        )}
+        )} */}
 
         {/* PLAYER MOBILE PHONE VIEW */}
         {role === 'PLAYER' && (
